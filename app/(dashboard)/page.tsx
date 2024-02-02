@@ -24,7 +24,7 @@ const DashboradPage = ({
           query={searchParams}
           />
         )}
-        <EmptyOrg/>
+        
       </div>
     </div>
   )
