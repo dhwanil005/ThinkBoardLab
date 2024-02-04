@@ -4,7 +4,7 @@ export const EmptySearch = () => {
     return(
         <div className="h-full flex flex-col items-center justify-center">
         <Image 
-            src="/empty-search.png"
+            src="/empty-search.svg"
             alt="Empty"
             height={140}
             width={140}
