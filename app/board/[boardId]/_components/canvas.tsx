@@ -15,7 +15,7 @@ export const Canvas = ({
     const info = useSelf((me)=>me.info);
     return (
         <main className="w-full h-full bg-neutral-100 touch-none relative">
-            <Info/>
+            <Info boardId={boardId}/>
             <Participants/>
             <Toolbar/>
         </main>
