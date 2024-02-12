@@ -15,11 +15,12 @@ import { useHistory,
 import { useCallback, useMemo, useState } from "react";
 import { Camera, CanvasMode, CanvasState, Color, LayerType, Point, Side, XYWH } from "@/types/canvas";
 import { CursorsPresence } from "./cursors-presence";
-import { connectionIdToColor, findInterceptingLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "@/lib/utils";
+import { colorToCss, connectionIdToColor, findInterceptingLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "@/lib/utils";
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
+import { Path } from "./path";
 
 const MAX_LAYERS = 100;
 interface CanvasProps {
@@ -33,6 +34,8 @@ export const Canvas = ({
     const [canvasState,setCanvasState] = useState<CanvasState>({
         mode:CanvasMode.None,
     });
+
+    const pencilDraft = useSelf((me)=>me.presence.pencilDraft);
     
     const [ camera, setCamera] = useState<Camera>({x:0,y:0});
     const [lastUsedColor, setLastUsedColor] = useState<Color>({
@@ -198,7 +201,7 @@ export const Canvas = ({
         setCanvasState({mode:CanvasMode.Pencil})
 
     },[lastUsedColor])
-    
+
     const resizeSelectedLayer = useMutation((
         {storage,self},
         point: Point
@@ -389,6 +392,14 @@ export const Canvas = ({
 
                         )}
                     <CursorsPresence />
+                    {pencilDraft != null && pencilDraft.length>0 && (
+                        <Path
+                            points={pencilDraft}
+                            fill={colorToCss(lastUsedColor)}
+                            x={0}
+                            y={0}
+                        />
+                    )}
                 </g>
             </svg>
         </main>
