@@ -12,7 +12,7 @@ import { useHistory,
       useStorage,
       useOthersMapped
     } from "@/liveblocks.config";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { Camera, CanvasMode, CanvasState, Color, LayerType, Point, Side, XYWH } from "@/types/canvas";
 import { CursorsPresence } from "./cursors-presence";
 import { colorToCss, connectionIdToColor, findInterceptingLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "@/lib/utils";
@@ -21,6 +21,8 @@ import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
 import { Path } from "./path";
+import { useDisabledScrollBounce } from "@/hooks/use-disable-scroll-button";
+import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
 const MAX_LAYERS = 100;
 interface CanvasProps {
@@ -44,6 +46,7 @@ export const Canvas = ({
         b:0,
     });
 
+    useDisabledScrollBounce();
     const history = useHistory();
     const canUndo = useCanUndo();
     const canRedo = useCanRedo();
@@ -340,6 +343,35 @@ export const Canvas = ({
 
         return layerIdsToColorSelection;
     },[selections]);
+
+    const deleteLayers = useDeleteLayers();
+
+    useEffect(() => {
+        function onKeyDown(e: KeyboardEvent) {
+          switch (e.key) {
+            // case "Backspace":
+            //   deleteLayers();
+            //   break;
+            case "z": {
+              if (e.ctrlKey || e.metaKey) {
+                if (e.shiftKey) {
+                  history.redo();
+                } else {
+                  history.undo();
+                }
+                break;
+              }
+            }
+          }
+        }
+    
+        document.addEventListener("keydown", onKeyDown);
+    
+        return () => {
+          document.removeEventListener("keydown", onKeyDown)
+        }
+      }, [deleteLayers, history]);
+    
 
     return (
         <main className="w-full h-full bg-neutral-100 touch-none relative">
