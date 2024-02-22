@@ -1,4 +1,4 @@
-# A Real-Time Miro Clone With Next.js, React, & Tailwind (2024)
+# A Real-Time Miro Clone With Next.js, React, & Tailwind
 
 ## Features
 
